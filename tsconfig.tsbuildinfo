@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/components/herooverlay.tsx","./src/components/hudlabels.tsx","./src/components/scene.tsx","./src/components/scrollsections.tsx","./src/lib/config.ts","./src/lib/panels.ts","./src/scene/aicore.tsx","./src/scene/camerarig.tsx","./src/scene/lights.tsx","./src/scene/particles.tsx","./src/scene/terrain.tsx"],"version":"5.9.3"}
