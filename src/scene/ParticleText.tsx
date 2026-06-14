@@ -16,26 +16,18 @@ interface Props {
   position?: [number, number, number];
   /** 文字の横幅（ワールド単位・実寸正規化）。 */
   width?: number;
-  /** 面の厚み（ワールド単位）。 */
+  /** Z 方向の厚み（ワールド単位・回転時の 3D 感）。 */
   thickness?: number;
-  /** 側面文字の奥行きスケール（横方向 → Z へ）。 */
-  sideScale?: number;
   dense: boolean;
   reducedMotion: boolean;
 }
 
 /**
  * 文字をサンプルし、実寸(bbox)で targetWidth に正規化したうえで、
- * 「前面に読める AI(A)」と「側面に読める AI(B)」の2枚を直交配置してクロスにする。
- * → 正面(-Z)からは A が、側面(±X)からは B が「AI」として読める。回転しても読める。
+ * 単一の「AI」点群（XY 平面・Z に厚みを持たせた立体スラブ）にする。
+ * 正面からはっきり「AI」と読め、一定回転で厚み(3D)が見える。余計なノイズは置かない。
  */
-function sampleText(
-  text: string,
-  step: number,
-  targetWidth: number,
-  thickness: number,
-  sideScale: number
-) {
+function sampleText(text: string, step: number, targetWidth: number, thickness: number) {
   const W = 1024;
   const H = 512;
   const cv = document.createElement("canvas");
@@ -71,16 +63,11 @@ function sampleText(
   const cx = (minX + maxX) / 2;
   const cy = (minY + maxY) / 2;
   const pts: number[] = [];
-  let k = 0;
   for (let i = 0; i < px.length; i += 2) {
     const sx = (px[i] - cx) * scale; // 文字の横（ワールド）
     const sy = -(px[i + 1] - cy) * scale; // 文字の縦（ワールド）
-    // A: 前面に読める（XY 平面、Z に薄い厚み）。常に生成（正面が主役）。
+    // 単一の「AI」スラブ（Z に薄い厚みのみ）。余計な側面文字は置かない＝正面が明瞭。
     pts.push(sx, sy, (Math.random() - 0.5) * thickness);
-    // B: 側面に読める（横 → Z にマップ、X に薄い厚み）。
-    //    正面中央にノイズの縦帯が出るのを避けるため、約 40% に間引く。
-    if (k % 5 < 2) pts.push((Math.random() - 0.5) * thickness, sy, sx * sideScale);
-    k++;
   }
   return new Float32Array(pts);
 }
@@ -89,8 +76,7 @@ export default function ParticleText({
   text = "AI",
   position = [1.2, 0, -30],
   width = 3.6,
-  thickness = 0.4,
-  sideScale = 0.55,
+  thickness = 0.7,
   dense,
   reducedMotion,
 }: Props) {
@@ -102,14 +88,14 @@ export default function ParticleText({
   useEffect(() => {
     let alive = true;
     const build = () => {
-      if (alive) setBase(sampleText(text, dense ? 2 : 4, width, thickness, sideScale));
+      if (alive) setBase(sampleText(text, dense ? 2 : 4, width, thickness));
     };
     if ((document as any).fonts?.ready) (document as any).fonts.ready.then(build);
     else build();
     return () => {
       alive = false;
     };
-  }, [text, dense, width, thickness, sideScale]);
+  }, [text, dense, width, thickness]);
 
   const sim = useMemo(() => {
     if (!base) return null;
@@ -147,12 +133,10 @@ export default function ParticleText({
     points.current.visible = mat.current.opacity > 0.01;
     if (!points.current.visible) return;
 
-    // 正面を主に見せつつ、時々ゆっくり振り向いて 3D（と側面の AI）を見せる。
-    // sin^3 で中央(正面=0)に長く留まり、周期的に ±80°付近まで振れる。
+    // 一定速度で連続回転（ターンテーブル）。わずかな固定チルトで厚み(3D)が常に見える。
     if (!reducedMotion) {
-      const s = Math.sin(t * 0.3);
-      points.current.rotation.y = s * s * s * 1.4;
-      points.current.rotation.x = Math.sin(t * 0.15) * 0.05;
+      points.current.rotation.y = t * 0.35;
+      points.current.rotation.x = 0.1;
     }
     points.current.updateMatrixWorld();
 
