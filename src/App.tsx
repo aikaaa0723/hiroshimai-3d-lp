@@ -1,6 +1,7 @@
 import { useQualitySettings, useReducedMotion } from "./lib/config";
 import Scene from "./components/Scene";
 import HeroOverlay from "./components/HeroOverlay";
+import HudFrame from "./components/HudFrame";
 import Loader from "./components/Loader";
 
 /**
@@ -18,6 +19,13 @@ export default function App() {
   return (
     <>
       <Scene settings={settings} reducedMotion={reducedMotion} />
+
+      {/* 環境光: 上部のポータル光（天井照明）＋四隅のフロスト。氷ドーム内の空気感。 */}
+      <div className="env-glow" aria-hidden />
+      <div className="env-frost" aria-hidden />
+
+      {/* 計器フレーム（ゴーストテキスト/クロスヘア/シェブロン/ブラケットナビ）。 */}
+      <HudFrame />
       <HeroOverlay reducedMotion={reducedMotion} />
 
       {/* 画面全体の薄いフィルムグレイン（postFx が無いモバイルでも質感を担保）。 */}

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Scramble from "./Scramble";
+import { useScrollOffset } from "../lib/useScrollOffset";
 
 /**
  * 画面に固定表示される最前面 UI（スクロールしない）。
@@ -16,6 +17,9 @@ interface Props {
 
 export default function HeroOverlay({ reducedMotion }: Props) {
   const [sound, setSound] = useState(false);
+  // オブジェクト計器アノテーションはヒーローでのみ表示し、スクロールで消す。
+  const offset = useScrollOffset();
+  const annoOpacity = Math.max(0, 1 - offset * 9);
 
   const fade = (delay: number) =>
     reducedMotion
@@ -50,6 +54,38 @@ export default function HeroOverlay({ reducedMotion }: Props) {
           ● <Scramble text="IMPLEMENTING" delay={650} />
         </span>
       </motion.div>
+
+      {/* オブジェクトの計器アノテーション（参考サイトの引き出し線＋読み値）。
+          オブジェクト（中央やや右）に重ねる。スクロールでフェードアウト。
+          framer-motion とは併用せず、scroll 連動の opacity のみで制御（競合回避）。 */}
+      <div className="objanno" style={{ opacity: annoOpacity, transition: "opacity 0.2s linear" }}>
+        {/* 引き出し線＋ティック（SVG。コンテナ内座標で対象中心へ伸ばす）。 */}
+        <svg className="objanno__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+          <polyline points="10,16 30,16 46,44" />
+          <polyline points="90,30 70,30 56,46" />
+          <polyline points="84,82 64,82 56,58" />
+          <circle cx="46" cy="44" r="0.9" />
+          <circle cx="56" cy="46" r="0.9" />
+          <circle cx="56" cy="58" r="0.9" />
+        </svg>
+
+        <div className="objanno__title">
+          <Scramble text="CORE_01" delay={1100} />
+          <span>ADAPTIVE INTELLIGENCE</span>
+        </div>
+
+        <div className="objanno__read">
+          <span className="k">LOAD</span>
+          <span className="v">41.2</span>
+          <span className="k">SYNC</span>
+          <span className="v">OK</span>
+        </div>
+
+        <div className="objanno__foot">
+          <span>D 06.14.2026</span>
+          <span className="objanno__cta">SCROLL TO EXPLORE</span>
+        </div>
+      </div>
 
       {/* 左下スクロール誘導 */}
       <motion.div className="scroll-hint" {...fade(1.2)}>

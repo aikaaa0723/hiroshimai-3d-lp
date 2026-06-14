@@ -18,6 +18,7 @@ import Lights from "../scene/Lights";
 import AICore from "../scene/AICore";
 import Particles from "../scene/Particles";
 import Terrain from "../scene/Terrain";
+import Pedestal from "../scene/Pedestal";
 import ScrollSections from "./ScrollSections";
 
 interface Settings {
@@ -76,6 +77,7 @@ export default function Scene({ settings, reducedMotion }: Props) {
 
       <Lights />
       <Terrain />
+      <Pedestal />
       <Particles count={settings.particleCount} reducedMotion={reducedMotion} />
       {settings.enablePostFx && (
         <AberrationDriver caRef={caRef} reducedMotion={reducedMotion} />

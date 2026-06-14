@@ -41,8 +41,9 @@ export default function CameraRig({ reducedMotion }: Props) {
   const tmpTarget = useRef(new THREE.Vector3());
 
   useFrame((state, delta) => {
-    // スクロール速度をポストエフェクト（色収差）へ橋渡し。
+    // スクロール速度/位置を DOM・ポストエフェクト側へ橋渡し（useScroll は ScrollControls 外で不可）。
     scrollState.velocity = scroll.delta;
+    scrollState.offset = scroll.offset;
 
     // scroll.offset は 0..1。セクション区間 [0, SECTIONS-1] にスケールする。
     const seg = scroll.offset * (CAM_KEYFRAMES.length - 1);

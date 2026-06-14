@@ -4,4 +4,4 @@
  * ポストエフェクト側（EffectComposer 内・ScrollControls 外）が読み取る。
  * useScroll は ScrollControls の外では使えないため、モジュール変数で橋渡しする。
  */
-export const scrollState = { velocity: 0 };
+export const scrollState = { velocity: 0, offset: 0 };
