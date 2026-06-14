@@ -69,7 +69,14 @@ body {
 .section--contact .section__index { color: var(--pink); }
 /* ヒーローのキーワード「実装」とコンタクト見出しは単色のアクセント。 */
 .hero-copy__title em { color: var(--pink); }
-.contact__title { color: var(--violet); }
+/* 「広島から、世界へ。」はブランドのグラデ（青→紫→マゼンタ）で着色。 */
+.contact__title {
+  background: linear-gradient(95deg, var(--blue) 0%, var(--violet) 50%, var(--pink) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 22px rgba(255, 255, 255, 0.5);
+}
 
 /* 固定の WebGL Canvas。全画面を覆う。 */
 .webgl {

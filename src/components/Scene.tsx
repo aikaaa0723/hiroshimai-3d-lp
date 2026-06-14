@@ -87,8 +87,8 @@ export default function Scene({ settings, reducedMotion }: Props) {
       <Terrain />
       {/* コアの台座（z0）と AI 空間の台座（z-24）。 */}
       <Pedestal />
-      <Pedestal position={[1.2, -2.0, -24]} />
-      {/* コアと AI 空間の境界＝ポータルリング（z-10）。ここを通過してワープする。 */}
+      <Pedestal position={[1.2, -3.2, -30]} />
+      {/* コアと AI 空間の境界＝ポータルリング（z-12）。ここを通過してワープする。 */}
       <PortalRing reducedMotion={reducedMotion} />
       {/* 最深部 AI 空間の、触ると動く粒子「AI」文字。 */}
       <ParticleText dense={settings.panelDetail > 0} reducedMotion={reducedMotion} />

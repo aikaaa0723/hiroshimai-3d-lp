@@ -51,7 +51,7 @@ export default function PortalRing({ reducedMotion }: Props) {
   });
 
   return (
-    <group ref={group} position={[1.2, 0, -10]}>
+    <group ref={group} position={[1.2, 0, -12]}>
       {/* 内側の発光トーラス（Bloom が拾って白く光る縁）。 */}
       <mesh>
         <torusGeometry args={[RADIUS, 0.12, 16, 96]} />

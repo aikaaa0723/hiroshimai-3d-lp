@@ -14,16 +14,28 @@ import { scrollState } from "../lib/scrollState";
 interface Props {
   text?: string;
   position?: [number, number, number];
-  /** 文字の横幅（ワールド単位）。 */
+  /** 文字の横幅（ワールド単位・実寸正規化）。 */
   width?: number;
-  /** Z 方向の厚み（ワールド単位）。 */
-  depth?: number;
+  /** 面の厚み（ワールド単位）。 */
+  thickness?: number;
+  /** 側面文字の奥行きスケール（横方向 → Z へ）。 */
+  sideScale?: number;
   dense: boolean;
   reducedMotion: boolean;
 }
 
-/** 文字を Canvas に描いて不透明ピクセルをサンプル → 中央化し、Z に厚みを持たせた base 配置。 */
-function sampleText(text: string, step: number, width: number, depth: number) {
+/**
+ * 文字をサンプルし、実寸(bbox)で targetWidth に正規化したうえで、
+ * 「前面に読める AI(A)」と「側面に読める AI(B)」の2枚を直交配置してクロスにする。
+ * → 正面(-Z)からは A が、側面(±X)からは B が「AI」として読める。回転しても読める。
+ */
+function sampleText(
+  text: string,
+  step: number,
+  targetWidth: number,
+  thickness: number,
+  sideScale: number
+) {
   const W = 1024;
   const H = 512;
   const cv = document.createElement("canvas");
@@ -31,33 +43,51 @@ function sampleText(text: string, step: number, width: number, depth: number) {
   cv.height = H;
   const ctx = cv.getContext("2d")!;
   ctx.fillStyle = "#fff";
-  ctx.font = `700 260px "Space Grotesk", "Inter", sans-serif`;
+  ctx.font = `700 300px "Space Grotesk", "Inter", sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(text, W / 2, H / 2);
 
   const data = ctx.getImageData(0, 0, W, H).data;
-  const pts: number[] = [];
-  const LAYERS = 2; // 1 ピクセルあたり複数点を別 Z に置いて体積感を出す
+  // 1) 不透明ピクセルを集めて bbox を取る。
+  const px: number[] = [];
+  let minX = W;
+  let maxX = 0;
+  let minY = H;
+  let maxY = 0;
   for (let y = 0; y < H; y += step) {
     for (let x = 0; x < W; x += step) {
       if (data[(y * W + x) * 4 + 3] > 128) {
-        const nx = ((x - W / 2) / W) * width;
-        const ny = (-(y - H / 2) / W) * width;
-        for (let l = 0; l < LAYERS; l++) {
-          pts.push(nx, ny, (Math.random() - 0.5) * depth);
-        }
+        px.push(x, y);
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
       }
     }
+  }
+  // 2) 実寸を targetWidth へ正規化。
+  const scale = targetWidth / Math.max(1, maxX - minX);
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+  const pts: number[] = [];
+  for (let i = 0; i < px.length; i += 2) {
+    const sx = (px[i] - cx) * scale; // 文字の横（ワールド）
+    const sy = -(px[i + 1] - cy) * scale; // 文字の縦（ワールド）
+    // A: 前面に読める（XY 平面、Z に薄い厚み）。
+    pts.push(sx, sy, (Math.random() - 0.5) * thickness);
+    // B: 側面に読める（横 → Z にマップ、X に薄い厚み）。
+    pts.push((Math.random() - 0.5) * thickness, sy, sx * sideScale);
   }
   return new Float32Array(pts);
 }
 
 export default function ParticleText({
   text = "AI",
-  position = [1.2, 0, -24],
-  width = 5.0,
-  depth = 1.0,
+  position = [1.2, 0, -30],
+  width = 6.0,
+  thickness = 0.45,
+  sideScale = 0.55,
   dense,
   reducedMotion,
 }: Props) {
@@ -69,14 +99,14 @@ export default function ParticleText({
   useEffect(() => {
     let alive = true;
     const build = () => {
-      if (alive) setBase(sampleText(text, dense ? 5 : 8, width, depth));
+      if (alive) setBase(sampleText(text, dense ? 2 : 4, width, thickness, sideScale));
     };
     if ((document as any).fonts?.ready) (document as any).fonts.ready.then(build);
     else build();
     return () => {
       alive = false;
     };
-  }, [text, dense, width, depth]);
+  }, [text, dense, width, thickness, sideScale]);
 
   const sim = useMemo(() => {
     if (!base) return null;
@@ -145,7 +175,7 @@ export default function ParticleText({
 
     const { n, cur, vel } = sim;
     const arr = points.current.geometry.attributes.position.array as Float32Array;
-    const R = 1.0;
+    const R = 1.4;
     const R2 = R * R;
     const spring = 22;
     const damp = 5.5;
