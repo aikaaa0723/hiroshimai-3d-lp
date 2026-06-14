@@ -71,13 +71,16 @@ function sampleText(
   const cx = (minX + maxX) / 2;
   const cy = (minY + maxY) / 2;
   const pts: number[] = [];
+  let k = 0;
   for (let i = 0; i < px.length; i += 2) {
     const sx = (px[i] - cx) * scale; // 文字の横（ワールド）
     const sy = -(px[i + 1] - cy) * scale; // 文字の縦（ワールド）
-    // A: 前面に読める（XY 平面、Z に薄い厚み）。
+    // A: 前面に読める（XY 平面、Z に薄い厚み）。常に生成（正面が主役）。
     pts.push(sx, sy, (Math.random() - 0.5) * thickness);
     // B: 側面に読める（横 → Z にマップ、X に薄い厚み）。
-    pts.push((Math.random() - 0.5) * thickness, sy, sx * sideScale);
+    //    正面中央にノイズの縦帯が出るのを避けるため、約 40% に間引く。
+    if (k % 5 < 2) pts.push((Math.random() - 0.5) * thickness, sy, sx * sideScale);
+    k++;
   }
   return new Float32Array(pts);
 }
@@ -85,8 +88,8 @@ function sampleText(
 export default function ParticleText({
   text = "AI",
   position = [1.2, 0, -30],
-  width = 6.0,
-  thickness = 0.45,
+  width = 3.6,
+  thickness = 0.4,
   sideScale = 0.55,
   dense,
   reducedMotion,
@@ -144,10 +147,12 @@ export default function ParticleText({
     points.current.visible = mat.current.opacity > 0.01;
     if (!points.current.visible) return;
 
-    // ゆっくり Y 回転（3D 感）。
+    // 正面を主に見せつつ、時々ゆっくり振り向いて 3D（と側面の AI）を見せる。
+    // sin^3 で中央(正面=0)に長く留まり、周期的に ±80°付近まで振れる。
     if (!reducedMotion) {
-      points.current.rotation.y = t * 0.18;
-      points.current.rotation.x = Math.sin(t * 0.15) * 0.06;
+      const s = Math.sin(t * 0.3);
+      points.current.rotation.y = s * s * s * 1.4;
+      points.current.rotation.x = Math.sin(t * 0.15) * 0.05;
     }
     points.current.updateMatrixWorld();
 
