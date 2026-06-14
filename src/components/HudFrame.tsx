@@ -17,13 +17,6 @@ export default function HudFrame() {
 
   return (
     <div className="hudframe">
-      {/* 背景ゴーストテキスト（極薄） */}
-      <div className="hudframe__ghost" aria-hidden>
-        ADAPTIVE
-        <br />
-        INTELLIGENCE
-      </div>
-
       {/* 四隅のコーナーティック */}
       <span className="corner corner--tl" aria-hidden />
       <span className="corner corner--tr" aria-hidden />

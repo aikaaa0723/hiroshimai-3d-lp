@@ -643,23 +643,6 @@ body {
   pointer-events: none;
 }
 
-/* 背景の極薄ゴーストテキスト。 */
-.hudframe__ghost {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: clamp(60px, 16vw, 220px);
-  line-height: 0.92;
-  letter-spacing: 0.02em;
-  color: rgba(28, 32, 48, 0.035);
-  white-space: nowrap;
-  user-select: none;
-}
-
 /* 四隅のコーナーティック（L字）。 */
 .corner {
   position: absolute;
@@ -928,7 +911,6 @@ body {
   .objanno,
   .chevron,
   .xhair { display: none; }
-  .hudframe__ghost { font-size: clamp(48px, 22vw, 120px); opacity: 0.6; }
   .bracketnav { gap: 16px; font-size: 9px; }
   /* 固定ブランド(左上)とセクション見出しの衝突を避けるため下げる。 */
   .section--modules .section__head,
