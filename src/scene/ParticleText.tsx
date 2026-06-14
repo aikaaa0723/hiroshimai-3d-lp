@@ -134,10 +134,12 @@ export default function ParticleText({
     if (!points.current.visible) return;
 
     // 一定速度で連続回転（ターンテーブル）。わずかな固定チルトで厚み(3D)が常に見える。
-    if (!reducedMotion) {
-      points.current.rotation.y = t * 0.35;
-      points.current.rotation.x = 0.1;
-    }
+    const ry = reducedMotion ? 0 : t * 0.35;
+    points.current.rotation.y = ry;
+    points.current.rotation.x = reducedMotion ? 0 : 0.1;
+    // 裏側(180°)でも「AI」と読めるよう、回転で生じる鏡像をローカル X 反転で打ち消す。
+    // tanh(4·cosθ): 正面≈+1 / 背面≈-1 / エッジ(90°,270°)≈0（薄い辺＝横スクイーズの変形）。
+    points.current.scale.x = Math.tanh(4 * Math.cos(ry));
     points.current.updateMatrixWorld();
 
     // ポインタ→（カメラに正対する平面）→ローカル座標へ変換（回転に追従）。
