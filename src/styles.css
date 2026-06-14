@@ -827,6 +827,80 @@ body {
 }
 
 /* ============================================================
+   ワープ演出（ポータル通過）: 放射速度線＋放射ブラー＋中心トンネル光。
+   opacity / scale / backdrop-blur は WarpOverlay が scrollState.warp で駆動。
+   ============================================================ */
+.warp {
+  position: fixed;
+  inset: 0;
+  z-index: 48;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity, backdrop-filter;
+}
+/* 中心から外へ伸びる速度線（白地で見えるよう寒色の細線）。 */
+.warp__streaks {
+  position: absolute;
+  inset: -25%;
+  background: repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg 1.3deg,
+    rgba(47, 111, 224, 0.3) 1.4deg 1.55deg,
+    transparent 1.6deg 3deg
+  );
+  -webkit-mask: radial-gradient(closest-side, transparent 15%, #000 56%);
+  mask: radial-gradient(closest-side, transparent 15%, #000 56%);
+  filter: blur(0.4px);
+  animation: warpSpin 1.4s linear infinite;
+}
+/* 中心の吸い込み光。 */
+.warp__core {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(110, 150, 235, 0.4) 7%,
+    transparent 24%
+  );
+}
+@keyframes warpSpin {
+  to {
+    transform: rotate(10deg);
+  }
+}
+
+/* ============================================================
+   05 AI CORE（最深部・ワープ到達先）。主役は 3D 粒子文字、HTML は最小限。
+   ============================================================ */
+.section--core {
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+}
+.core-finale {
+  margin-top: 12vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.core-finale__idx {
+  color: var(--pink);
+}
+.core-finale__hint {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--text-mid);
+  border: 1px solid rgba(61, 90, 171, 0.3);
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(6px);
+}
+
+/* ============================================================
    アニメーション
    ============================================================ */
 @keyframes pulse {

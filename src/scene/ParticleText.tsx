@@ -50,8 +50,8 @@ function sampleText(text: string, step: number, width: number) {
 
 export default function ParticleText({
   text = "AI",
-  position = [1.2, 0, 1.7],
-  width = 2.6,
+  position = [1.2, 0, -24], // 最深部の AI 空間（ポータルの先）
+  width = 3.0,
   dense,
   reducedMotion,
 }: Props) {
@@ -109,9 +109,9 @@ export default function ParticleText({
     const t = state.clock.elapsedTime;
     const dt = Math.min(delta, 0.05);
 
-    // ヒーローでのみ濃く、スクロールでフェード。
-    const targetOpacity = Math.max(0, 1 - scrollState.offset * 6);
-    mat.current.opacity = THREE.MathUtils.lerp(mat.current.opacity, targetOpacity, 0.08);
+    // 最深部の AI 空間に到達した終盤でのみ出現（ワープ通過後にフェードイン）。
+    const targetOpacity = THREE.MathUtils.smoothstep(scrollState.offset, 0.84, 0.96);
+    mat.current.opacity = THREE.MathUtils.lerp(mat.current.opacity, targetOpacity, 0.1);
     points.current.visible = mat.current.opacity > 0.01;
     if (!points.current.visible) return;
 

@@ -4,5 +4,8 @@
  * ポストエフェクト側（EffectComposer 内・ScrollControls 外）が読み取る。
  * useScroll は ScrollControls の外では使えないため、モジュール変数で橋渡しする。
  */
-/** pulse: セクション切替時に 1 へ叩いて、色収差スパイク等の遷移演出に使う（毎フレーム減衰）。 */
-export const scrollState = { velocity: 0, offset: 0, pulse: 0 };
+/**
+ * pulse: セクション切替時に 1 へ叩いて色収差スパイク等に使う（毎フレーム減衰）。
+ * warp : ポータル通過区間(終盤)で 0→1→0 に膨らむワープ強度（CameraRig が書込）。
+ */
+export const scrollState = { velocity: 0, offset: 0, pulse: 0, warp: 0 };

@@ -13,17 +13,20 @@ import { scrollState } from "../lib/scrollState";
  *  3) ブリージング: 常時、極小の sin 揺れで「呼吸している」ような生命感を出す。
  */
 
-// セクションごとのカメラ位置と注視点。オブジェクトは x≈1.2 にオフセット配置している。
+// 空間レイアウト（奥行き -Z へ進む）:
+//   コア(dome)= z 0 / ポータルリング = z -10 / AI空間(粒子文字) = z -24。
+//   カメラは手前(+Z)からコアを抜け、ポータルの穴を通過(ワープ)し、最深部の AI 空間へ到達する。
 const CAM_KEYFRAMES: { pos: THREE.Vector3; target: THREE.Vector3 }[] = [
-  // 0: Hero — 全景を右寄りに収める
-  { pos: new THREE.Vector3(0.0, 0.4, 10.0), target: new THREE.Vector3(1.2, 0.0, 0.0) },
-  // 1: Intelligence Modules — 斜め上から、分解した姿を見る
-  { pos: new THREE.Vector3(3.4, 1.4, 7.2), target: new THREE.Vector3(1.2, 0.1, 0.0) },
-  // 2: System Architecture — 内部のコアへ肉薄
-  { pos: new THREE.Vector3(1.25, 0.1, 2.6), target: new THREE.Vector3(1.2, 0.0, 0.0) },
-  // 3: Contact / Footer — 遠景へ引き、さらに見上げる構図にして構造体を画面下方へ落とす。
-  //    （見出し/CTA を上半分のクリーンな余白に置けるよう、target.y を上げて視線を上向きに）
-  { pos: new THREE.Vector3(0.0, 0.6, 19.0), target: new THREE.Vector3(0.8, 1.6, 0.0) },
+  // 0: Hero — コア全景を右寄りに収める
+  { pos: new THREE.Vector3(0.0, 0.4, 9.5), target: new THREE.Vector3(1.2, 0.0, 0.0) },
+  // 1: Services — 斜め上から、分解した姿を見る
+  { pos: new THREE.Vector3(3.6, 1.3, 6.6), target: new THREE.Vector3(1.2, 0.1, 0.0) },
+  // 2: Implementation — 内部のコアへ肉薄（視線を奥へ向け始める。発光コアを上側から避けて通過）
+  { pos: new THREE.Vector3(1.25, 0.8, 3.0), target: new THREE.Vector3(1.2, 0.1, -1.5) },
+  // 3: Contact — 分解したコアを抜け、ポータルリング(z-10)に正対して接近（コア中心は上方からかわす）
+  { pos: new THREE.Vector3(1.2, 1.1, -4.0), target: new THREE.Vector3(1.2, 0.1, -10.0) },
+  // 4: AI 空間 — ポータルを通過し、最深部の粒子「AI」文字(z-24)に到達
+  { pos: new THREE.Vector3(1.2, 0.0, -20.5), target: new THREE.Vector3(1.2, 0.0, -24.0) },
 ];
 
 interface Props {
@@ -44,6 +47,11 @@ export default function CameraRig({ reducedMotion }: Props) {
     // スクロール速度/位置を DOM・ポストエフェクト側へ橋渡し（useScroll は ScrollControls 外で不可）。
     scrollState.velocity = scroll.delta;
     scrollState.offset = scroll.offset;
+    // ワープ強度: ポータル通過区間(終盤)で 0→1→0。色収差/速度線/ブラーを駆動。
+    const o = scroll.offset;
+    const wIn = THREE.MathUtils.smoothstep(o, 0.76, 0.86);
+    const wOut = THREE.MathUtils.smoothstep(o, 0.9, 1.0);
+    scrollState.warp = wIn * (1 - wOut);
 
     // scroll.offset は 0..1。セクション区間 [0, SECTIONS-1] にスケールする。
     const seg = scroll.offset * (CAM_KEYFRAMES.length - 1);

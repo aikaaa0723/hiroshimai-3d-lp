@@ -3,6 +3,7 @@ import Scene from "./components/Scene";
 import HeroOverlay from "./components/HeroOverlay";
 import HudFrame from "./components/HudFrame";
 import SceneTransition from "./components/SceneTransition";
+import WarpOverlay from "./components/WarpOverlay";
 import Loader from "./components/Loader";
 
 /**
@@ -31,6 +32,9 @@ export default function App() {
 
       {/* 画面転換: セクション切替時にフロストフラッシュ＋色収差スパイク。 */}
       <SceneTransition reducedMotion={reducedMotion} />
+
+      {/* ワープ: ポータル通過時の放射速度線＋放射ブラー。 */}
+      <WarpOverlay reducedMotion={reducedMotion} />
 
       {/* 画面全体の薄いフィルムグレイン（postFx が無いモバイルでも質感を担保）。 */}
       <div className="grain" aria-hidden />

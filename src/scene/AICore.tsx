@@ -17,7 +17,8 @@ const CORE_RADIUS = 0.85;
  * → Contact=0.12(ほぼ再結合して遠景へ)。セクション間は線形補間。
  */
 function explodeAt(offset: number): number {
-  const keys = [0, 0.35, 0.12, 0.05]; // ↑のニュアンスを 4 セクションに割当
+  // 0:結合 1:最大分解(Services) 2:やや閉じ(内部) 3:大きく開く(通過路を作る) 4:四散(奥へ離脱)
+  const keys = [0, 1.0, 0.5, 2.2, 3.2];
   const seg = offset * (keys.length - 1);
   const i = Math.min(keys.length - 2, Math.floor(seg));
   const f = THREE.MathUtils.clamp(seg - i, 0, 1);

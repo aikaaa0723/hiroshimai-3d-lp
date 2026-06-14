@@ -126,6 +126,15 @@ export default function ScrollSections() {
             <span className="cta__arrow">→</span>
           </a>
         </div>
+      </section>
+
+      {/* ───────────── 05 AI CORE（最深部・ワープ到達先） ───────────── */}
+      {/* 主役は 3D の触れる粒子「AI」文字。HTML は最小限の見出し＋ヒント＋フッターのみ。 */}
+      <section className="section section--core">
+        <div className="core-finale">
+          <span className="section__index core-finale__idx">// 05 &nbsp;AI CORE</span>
+          <p className="core-finale__hint">粒子に触れてみてください</p>
+        </div>
 
         <footer className="footer">
           <div className="footer__brand">

@@ -13,10 +13,14 @@ const RINGS = [
   { r: 3.4, op: 0.14, color: PALETTE.textLow },
 ];
 
-export default function Pedestal() {
+export default function Pedestal({
+  position = [1.2, -1.85, 0],
+}: {
+  position?: [number, number, number];
+}) {
   return (
-    // オブジェクトは [1.2,0,0]。その真下に水平配置（XZ 平面）。
-    <group position={[1.2, -1.85, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+    // 対象の真下に水平配置（XZ 平面）。
+    <group position={position} rotation={[-Math.PI / 2, 0, 0]}>
       {/* 床のごく薄いディスク（中心を少し締めて“台座”に見せる）。 */}
       <mesh>
         <circleGeometry args={[3.6, 72]} />

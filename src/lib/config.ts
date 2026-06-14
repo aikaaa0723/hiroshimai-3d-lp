@@ -36,8 +36,9 @@ export const POP3 = ["#2F6FE0", "#8B5CF6", "#E41884"] as const;
 /** 上記の発光版（構造体エッジ/コア用）。 */
 export const POP3_GLOW = ["#5B8CFF", "#A98BFF", "#FF4FA3"] as const;
 
-/** スクロールのセクション数（= ScrollControls の pages）。 */
-export const SECTIONS = 4;
+/** スクロールのセクション数（= ScrollControls の pages）。
+ *  0:Hero 1:Services 2:Implementation 3:Contact(ポータル接近) 4:AI空間(ワープ到達). */
+export const SECTIONS = 5;
 
 export type Quality = "high" | "low";
 

@@ -9,7 +9,7 @@ import { SECTIONS } from "../lib/config";
  * - 下中央のブラケット選択ナビ（現在セクションを [ ] で囲む・他は減光）
  * すべて装飾なので pointer-events:none（スクロール/3D 操作を妨げない）。
  */
-const NAV = ["HERO", "SERVICES", "IMPLEMENT", "CONTACT"];
+const NAV = ["HERO", "SERVICES", "IMPLEMENT", "CONTACT", "AI//CORE"];
 
 export default function HudFrame() {
   const offset = useScrollOffset();
