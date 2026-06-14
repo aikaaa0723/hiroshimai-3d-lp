@@ -2,6 +2,7 @@ import { useQualitySettings, useReducedMotion } from "./lib/config";
 import Scene from "./components/Scene";
 import HeroOverlay from "./components/HeroOverlay";
 import HudFrame from "./components/HudFrame";
+import SceneTransition from "./components/SceneTransition";
 import Loader from "./components/Loader";
 
 /**
@@ -27,6 +28,9 @@ export default function App() {
       {/* 計器フレーム（ゴーストテキスト/クロスヘア/シェブロン/ブラケットナビ）。 */}
       <HudFrame />
       <HeroOverlay reducedMotion={reducedMotion} />
+
+      {/* 画面転換: セクション切替時にフロストフラッシュ＋色収差スパイク。 */}
+      <SceneTransition reducedMotion={reducedMotion} />
 
       {/* 画面全体の薄いフィルムグレイン（postFx が無いモバイルでも質感を担保）。 */}
       <div className="grain" aria-hidden />

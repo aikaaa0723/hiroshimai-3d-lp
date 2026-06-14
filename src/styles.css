@@ -795,6 +795,38 @@ body {
 }
 
 /* ============================================================
+   画面転換のフロストフラッシュ（セクション切替時に1回再生）。
+   3D 側の色収差スパイクと合わせて「色収差＋ディスプレイス＋フロスト」の遷移に。
+   ============================================================ */
+.scene-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+  animation: sceneFlash 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes sceneFlash {
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    background: rgba(255, 255, 255, 0);
+    transform: scaleX(1);
+  }
+  22% {
+    opacity: 1;
+    backdrop-filter: blur(10px) brightness(1.04);
+    background: rgba(232, 238, 250, 0.16);
+    transform: scaleX(1.012);
+  }
+  100% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    background: rgba(255, 255, 255, 0);
+    transform: scaleX(1);
+  }
+}
+
+/* ============================================================
    アニメーション
    ============================================================ */
 @keyframes pulse {

@@ -19,6 +19,7 @@ import AICore from "../scene/AICore";
 import Particles from "../scene/Particles";
 import Terrain from "../scene/Terrain";
 import Pedestal from "../scene/Pedestal";
+import ParticleText from "../scene/ParticleText";
 import ScrollSections from "./ScrollSections";
 
 interface Settings {
@@ -44,9 +45,13 @@ function AberrationDriver({
   useFrame(() => {
     const e = caRef.current;
     if (!e || !e.offset) return;
+    if (!reducedMotion) scrollState.pulse *= 0.9; // 遷移パルスを減衰
     const base = 0.0006;
-    const v = reducedMotion ? 0 : Math.min(scrollState.velocity * 6, 0.006);
-    const x = THREE.MathUtils.lerp(e.offset.x, base + v, 0.12);
+    // 速度連動＋セクション切替パルス（画面転換時の色収差スパイク）。
+    const v = reducedMotion
+      ? 0
+      : Math.min(scrollState.velocity * 6, 0.006) + scrollState.pulse * 0.014;
+    const x = THREE.MathUtils.lerp(e.offset.x, base + v, 0.18);
     e.offset.set(x, x * 0.7);
   });
   return null;
@@ -78,6 +83,8 @@ export default function Scene({ settings, reducedMotion }: Props) {
       <Lights />
       <Terrain />
       <Pedestal />
+      {/* 触ると動く粒子の「AI」文字（ヒーローの主役・参考の粒子ペンギン代替）。 */}
+      <ParticleText dense={settings.panelDetail > 0} reducedMotion={reducedMotion} />
       <Particles count={settings.particleCount} reducedMotion={reducedMotion} />
       {settings.enablePostFx && (
         <AberrationDriver caRef={caRef} reducedMotion={reducedMotion} />
