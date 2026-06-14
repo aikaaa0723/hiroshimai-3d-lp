@@ -109,13 +109,11 @@ export default function ScrollSections() {
         </div>
       </section>
 
-      {/* ───────────── 04 CONTACT / FOOTER ───────────── */}
+      {/* ───────────── 04 CONTACT（ポータル接近） ───────────── */}
+      {/* 「広島から、世界へ。」はワープ後の AI 空間(05)へ移設。ここは導線(CTA)のみ。 */}
       <section className="section section--contact">
         <div className="contact">
           <Scramble className="section__index" text="// 04  CONTACT" />
-          <h2 className="contact__title">
-            広島から、世界へ。
-          </h2>
           <p className="contact__lead">
             人が、人にしかできない創造的な仕事に没頭できる社会をつくる。
             <br />
@@ -129,11 +127,11 @@ export default function ScrollSections() {
       </section>
 
       {/* ───────────── 05 AI CORE（最深部・ワープ到達先） ───────────── */}
-      {/* 主役は 3D の触れる粒子「AI」文字。HTML は最小限の見出し＋ヒント＋フッターのみ。 */}
+      {/* 主役は 3D の触れる粒子「AI」文字。「広島から、世界へ。」をこの空間に表示。 */}
       <section className="section section--core">
         <div className="core-finale">
           <span className="section__index core-finale__idx">// 05 &nbsp;AI CORE</span>
-          <p className="core-finale__hint">粒子に触れてみてください</p>
+          <h2 className="contact__title">広島から、世界へ。</h2>
         </div>
 
         <footer className="footer">

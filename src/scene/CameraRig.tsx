@@ -25,8 +25,9 @@ const CAM_KEYFRAMES: { pos: THREE.Vector3; target: THREE.Vector3 }[] = [
   { pos: new THREE.Vector3(1.25, 0.8, 3.0), target: new THREE.Vector3(1.2, 0.1, -1.5) },
   // 3: Contact — 分解したコアを抜け、ポータルリング(z-10)に正対して接近（コア中心は上方からかわす）
   { pos: new THREE.Vector3(1.2, 1.1, -4.0), target: new THREE.Vector3(1.2, 0.1, -10.0) },
-  // 4: AI 空間 — ポータルを通過し、最深部の粒子「AI」文字(z-24)に到達
-  { pos: new THREE.Vector3(1.2, 0.0, -20.5), target: new THREE.Vector3(1.2, 0.0, -24.0) },
+  // 4: AI 空間 — ポータルを通過し、最深部の粒子「AI」文字(z-24)に到達。
+  //    大型化した文字(幅5)を収めるため十分に引く（距離 ~8）。
+  { pos: new THREE.Vector3(1.2, 0.1, -16.0), target: new THREE.Vector3(1.2, 0.0, -24.0) },
 ];
 
 interface Props {
