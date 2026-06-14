@@ -6,6 +6,8 @@
  * 各 <section> は 100vh。コンテナは pointer-events:none で 3D 操作・スクロールを通し、
  * 操作対象（カード/CTA）だけ pointer-events:auto に戻す（styles.css）。
  */
+import Scramble from "./Scramble";
+
 export default function ScrollSections() {
   return (
     <div className="sections">
@@ -30,7 +32,7 @@ export default function ScrollSections() {
       {/* ───────────── 02 SERVICES（主力3領域 / A-5） ───────────── */}
       <section className="section section--modules">
         <header className="section__head">
-          <span className="section__index">// 02 &nbsp;SERVICES</span>
+          <Scramble className="section__index" text="// 02  SERVICES" />
           <h2 className="section__title">事業</h2>
           <p className="section__lead">
             入口は、顧問・研修・開発のどれでもいい。目的はひとつ、現場への「実装」。
@@ -46,7 +48,7 @@ export default function ScrollSections() {
               外部CTO・AI顧問として経営に伴走。チャットで相談し放題、必要な時はすぐ動ける体制で、
               戦略から運用までを支える。
             </p>
-            <span className="card__meta">ADVISORY</span>
+            <Scramble className="card__meta" text="ADVISORY" />
           </article>
 
           <article className="card">
@@ -56,7 +58,7 @@ export default function ScrollSections() {
               基礎 → 実践 → 自動化の3STEP。「触れる」から「業務に組み込める」へ。
               研修後3ヶ月のフォローで、現場に定着するまで伴走する。
             </p>
-            <span className="card__meta">TRAINING</span>
+            <Scramble className="card__meta" text="TRAINING" />
           </article>
 
           <article className="card">
@@ -66,7 +68,7 @@ export default function ScrollSections() {
               要件定義から運用まで一気通貫。「作って終わり」ではなく、業務に根付くシステムを届ける。
               IoT（製造・物流・農業）も開発領域に含む。
             </p>
-            <span className="card__meta">BUILD &amp; IoT</span>
+            <Scramble className="card__meta" text="BUILD & IoT" />
           </article>
         </div>
       </section>
@@ -74,7 +76,7 @@ export default function ScrollSections() {
       {/* ───────────── 03 IMPLEMENTATION（ロードマップ4フェーズ / A-9） ───────────── */}
       <section className="section section--arch">
         <header className="section__head section__head--right">
-          <span className="section__index">// 03 &nbsp;IMPLEMENTATION</span>
+          <Scramble className="section__index" text="// 03  IMPLEMENTATION" />
           <h2 className="section__title">実装プロセス</h2>
           <p className="section__lead">
             構想で終わらせない。小さく試し、業務フローへ組み込み、現場に根付くまで磨き切る。
@@ -110,7 +112,7 @@ export default function ScrollSections() {
       {/* ───────────── 04 CONTACT / FOOTER ───────────── */}
       <section className="section section--contact">
         <div className="contact">
-          <span className="section__index">// 04 &nbsp;CONTACT</span>
+          <Scramble className="section__index" text="// 04  CONTACT" />
           <h2 className="contact__title">
             広島から、世界へ。
           </h2>

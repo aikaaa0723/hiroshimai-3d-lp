@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useScroll } from "@react-three/drei";
 import * as THREE from "three";
+import { scrollState } from "../lib/scrollState";
 
 /**
  * カメラの主動作をすべて担当するリグ。
@@ -40,6 +41,9 @@ export default function CameraRig({ reducedMotion }: Props) {
   const tmpTarget = useRef(new THREE.Vector3());
 
   useFrame((state, delta) => {
+    // スクロール速度をポストエフェクト（色収差）へ橋渡し。
+    scrollState.velocity = scroll.delta;
+
     // scroll.offset は 0..1。セクション区間 [0, SECTIONS-1] にスケールする。
     const seg = scroll.offset * (CAM_KEYFRAMES.length - 1);
     const i = Math.min(CAM_KEYFRAMES.length - 2, Math.floor(seg));

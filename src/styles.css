@@ -20,7 +20,9 @@
   --pink: #e41884;
 
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --sans: "Inter", "Noto Sans JP", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* 参考(igloo.inc)系の洗練グロテスク感を Space Grotesk で。日本語は Noto Sans JP。 */
+  --sans: "Space Grotesk", "Inter", "Noto Sans JP", system-ui, -apple-system,
+    "Segoe UI", sans-serif;
 
   --pad: clamp(20px, 4vw, 48px);
 }
@@ -525,6 +527,63 @@ body {
   font-size: 8px;
   letter-spacing: 0.06em;
   color: var(--text-mid);
+}
+
+/* ============================================================
+   ローディングイントロ（igloo.inc 風）。白地・カウンタ＋スクランブル＋進捗バー。
+   完了後に上方向へスライドしてシーンへ流入する（JS でトランスフォーム）。
+   ============================================================ */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--bg-top);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform, opacity;
+}
+.loader__inner {
+  width: min(520px, 80vw);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.loader__brand {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(28px, 5vw, 44px);
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+.loader__brand .ai {
+  color: var(--pink);
+}
+.loader__tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--text-low);
+}
+.loader__bar {
+  position: relative;
+  height: 1px;
+  width: 100%;
+  background: rgba(61, 90, 171, 0.18);
+  overflow: hidden;
+}
+.loader__bar span {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  background: var(--blue);
+}
+.loader__count {
+  align-self: flex-end;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  color: var(--ink);
 }
 
 /* ============================================================

@@ -1,8 +1,18 @@
-import { Canvas } from "@react-three/fiber";
+import { useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { ScrollControls, Scroll } from "@react-three/drei";
-import { EffectComposer, Bloom, Noise, Vignette, SMAA } from "@react-three/postprocessing";
+import {
+  EffectComposer,
+  Bloom,
+  Noise,
+  Vignette,
+  SMAA,
+  ChromaticAberration,
+} from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
+import * as THREE from "three";
 import { PALETTE, SECTIONS } from "../lib/config";
+import { scrollState } from "../lib/scrollState";
 import CameraRig from "../scene/CameraRig";
 import Lights from "../scene/Lights";
 import AICore from "../scene/AICore";
@@ -17,6 +27,30 @@ interface Settings {
   panelDetail: number;
 }
 
+/**
+ * 色収差を毎フレーム駆動するだけのコンポーネント（描画は持たず null を返す）。
+ * EffectComposer は直下の子から effect を収集するため、ChromaticAberration は
+ * composer の直接の子として置き、その ref をここで更新する（ラッパで包むと収集されない）。
+ * igloo.inc のシーン遷移の質感: 常時わずか＋スクロール速度で“フロスト/にじみ”が増す。
+ */
+function AberrationDriver({
+  caRef,
+  reducedMotion,
+}: {
+  caRef: React.MutableRefObject<any>;
+  reducedMotion: boolean;
+}) {
+  useFrame(() => {
+    const e = caRef.current;
+    if (!e || !e.offset) return;
+    const base = 0.0006;
+    const v = reducedMotion ? 0 : Math.min(scrollState.velocity * 6, 0.006);
+    const x = THREE.MathUtils.lerp(e.offset.x, base + v, 0.12);
+    e.offset.set(x, x * 0.7);
+  });
+  return null;
+}
+
 interface Props {
   settings: Settings;
   reducedMotion: boolean;
@@ -28,6 +62,8 @@ interface Props {
  * fog がシーンを霧色へ溶かし、遠景の地形と粒子に奥行きを与える。
  */
 export default function Scene({ settings, reducedMotion }: Props) {
+  // 色収差エフェクトの ref（composer 直下の effect とドライバで共有）。
+  const caRef = useRef<any>(null);
   return (
     <Canvas
       className="webgl"
@@ -41,6 +77,9 @@ export default function Scene({ settings, reducedMotion }: Props) {
       <Lights />
       <Terrain />
       <Particles count={settings.particleCount} reducedMotion={reducedMotion} />
+      {settings.enablePostFx && (
+        <AberrationDriver caRef={caRef} reducedMotion={reducedMotion} />
+      )}
 
       {/* スクロール駆動。damping で慣性を持たせ、セクション遷移を滑らかにする。 */}
       <ScrollControls pages={SECTIONS} damping={0.28} distance={1}>
@@ -61,6 +100,13 @@ export default function Scene({ settings, reducedMotion }: Props) {
             luminanceThreshold={0.55}
             luminanceSmoothing={0.2}
             mipmapBlur
+          />
+          {/* スクロール速度連動の色収差（igloo 風の遷移質感）。ref は AberrationDriver が更新。 */}
+          <ChromaticAberration
+            ref={caRef}
+            offset={new THREE.Vector2(0.0006, 0.0004)}
+            radialModulation={false}
+            modulationOffset={0}
           />
           <Noise opacity={0.045} blendFunction={BlendFunction.OVERLAY} />
           <Vignette eskil={false} offset={0.25} darkness={0.55} />

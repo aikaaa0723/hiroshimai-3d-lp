@@ -1,6 +1,7 @@
 import { useQualitySettings, useReducedMotion } from "./lib/config";
 import Scene from "./components/Scene";
 import HeroOverlay from "./components/HeroOverlay";
+import Loader from "./components/Loader";
 
 /**
  * アプリのルート。
@@ -21,6 +22,9 @@ export default function App() {
 
       {/* 画面全体の薄いフィルムグレイン（postFx が無いモバイルでも質感を担保）。 */}
       <div className="grain" aria-hidden />
+
+      {/* ローディングイントロ（最前面）。完了後に自らアンマウントする。 */}
+      <Loader reducedMotion={reducedMotion} />
     </>
   );
 }
